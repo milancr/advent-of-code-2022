@@ -67,9 +67,9 @@ func getOutcome2(input1, input2 string) int {
 	}
 	if input2 == "Y" {
 		return Tie + score[input1]
-	} else {
-		return Lost + onLose(input1)
 	}
+	return Lost + onLose(input1)
+
 }
 
 func onWin(oppHand string) int {
