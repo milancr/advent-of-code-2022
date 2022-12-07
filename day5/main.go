@@ -18,7 +18,7 @@ var stacks = [][]string{
 	{"P", "N", "R", "F", "W", "T", "V", "C"},
 	{"J", "W", "H", "G", "R", "S", "V"}}
 
-// Move from input text
+// Move is the instruction per line of  input text
 type Move struct {
 	amount,
 	from,
@@ -52,10 +52,9 @@ func main() {
 				a = append(a[:idx], a[idx+1:]...)
 			}
 		}
-		// fmt.Printf("%#v", a)
+
 		newArr = append(newArr, a)
 	}
-	// fmt.Printf("%#v", newArr)
 
 	for _, arr := range newArr {
 		amt, err := strconv.Atoi(arr[0])
@@ -68,26 +67,75 @@ func main() {
 		moves = append(moves, Move{amount: amt, from: from, to: to})
 	}
 
-	for _, move := range moves {
-		fr := stacks[move.from-1]
-		t := stacks[move.to-1]
+	// ! bug starting here
+	// tried making copies using copy method and appending
+	stack1 := make([][]string, 0)
+	stack2 := make([][]string, 0)
+	for _, arr := range stacks {
+		stack1 = append(stack1, arr)
+	}
+	for _, arr := range stacks {
+		stack2 = append(stack2, arr)
+	}
 
-		for i := len(fr) - 1; i >= 0 && move.amount > 0; i-- {
-			val := fr[i]
-			t = append(t, val)
-			fr = fr[:i]
+	// calling crane 1 before crane2 causes crane2 to return the wrong answer
+	// since I'm making copies of global variable stacks the operations should be executed on the copies
+	// and not affect the original
+	// not sure why one would affect the other, any suggestions appreciated
+	fmt.Println(crane1(moves, stack1))
+	// correct: CVCWCRTVQ
+	fmt.Println(crane2(moves, stack2))
+	// correct: CNSCZWLVT
+
+}
+
+func crane1(moves []Move, s1 [][]string) string {
+	stack1 := make([][]string, 0)
+	for _, arr := range stacks {
+		stack1 = append(stack1, arr)
+	}
+	for _, move := range moves {
+		from := stack1[move.from-1]
+		to := stack1[move.to-1]
+
+		for i := len(from) - 1; i >= 0 && move.amount > 0; i-- {
+			val := from[i]
+			to = append(to, val)
+			from = from[:i]
 			move.amount--
 		}
-		stacks[move.from-1] = fr
-		stacks[move.to-1] = t
+		stack1[move.from-1] = from
+		stack1[move.to-1] = to
 
-		// fmt.Println(stacks[move.from-1], stacks[move.to-1], move.amount)
-		// fmt.Printf("%+v \n", stacks)
 	}
 	str := strings.Builder{}
-	for _, val := range stacks {
-		str.WriteString(val[0])
+	for _, val := range stack1 {
+		str.WriteString(val[len(val)-1])
 	}
-	fmt.Println(str.String())
-	// FZMRCPTMH -- incorrect will review tomorrow
+	return str.String()
+}
+
+func crane2(moves []Move, s2 [][]string) string {
+	for _, move := range moves {
+		from := s2[move.from-1]
+		to := s2[move.to-1]
+
+		i := len(from) - move.amount
+		if i < 0 {
+			i = 0
+		}
+		crates := from[i:]
+		from = from[:i]
+		to = append(to, crates...)
+
+		s2[move.from-1] = from
+		s2[move.to-1] = to
+
+	}
+
+	str := strings.Builder{}
+	for _, val := range s2 {
+		str.WriteString(val[len(val)-1])
+	}
+	return str.String()
 }

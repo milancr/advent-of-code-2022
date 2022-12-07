@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"strings"
 )
@@ -36,6 +37,18 @@ func main() {
 
 	// fmt.Println(total)
 	// 7821
+
+	sum := 0
+	ch := make(chan int)
+	for i := 0; i < len(strarr); i += 3 {
+		go findBadgeCode(strarr[i], strarr[i+1], strarr[i+2], ch)
+	}
+
+	for i := 0; i < len(strarr); i += 3 {
+		sum += <-ch
+	}
+	fmt.Println(sum)
+
 	groupTotal := 0
 	for i := 0; i < len(strarr); i += 3 {
 		str1 := strarr[i]
@@ -62,8 +75,9 @@ func main() {
 			}
 		}
 	}
-	// fmt.Println(groupTotal)
+	fmt.Println(groupTotal)
 	// 2752
+
 }
 
 func priority(char rune) int {
@@ -72,5 +86,30 @@ func priority(char rune) int {
 	}
 
 	return int(char - 'a' + 1)
+
+}
+
+func findBadgeCode(e1, e2, e3 string, ch chan int) {
+
+	m1 := map[rune]bool{}
+
+	m2 := map[rune]bool{}
+
+	for _, char := range e1 {
+		m1[char] = true
+	}
+
+	for _, char := range e2 {
+		if _, ok := m1[char]; ok {
+			m2[char] = true
+		}
+	}
+
+	for _, char := range e3 {
+		if _, ok := m2[char]; ok {
+			ch <- priority(char)
+			break
+		}
+	}
 
 }
