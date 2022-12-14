@@ -67,36 +67,33 @@ func main() {
 		moves = append(moves, Move{amount: amt, from: from, to: to})
 	}
 
-	// ! bug starting here
-	// tried making copies using copy method and appending
-	stack1 := make([][]string, 0)
-	stack2 := make([][]string, 0)
-	for _, arr := range stacks {
-		stack1 = append(stack1, arr)
+	stack1 := make([][]string, len(stacks))
+	stack2 := make([][]string, len(stacks))
+
+	for idx := range stack1 {
+		tmp := make([]string, len(stacks[idx]))
+		copy(tmp, stacks[idx])
+		stack1[idx] = tmp
 	}
-	for _, arr := range stacks {
-		stack2 = append(stack2, arr)
+	for idx := range stack2 {
+		tmp := make([]string, len(stacks[idx]))
+		copy(tmp, stacks[idx])
+		stack2[idx] = tmp
 	}
 
-	// calling crane 1 before crane2 causes crane2 to return the wrong answer
-	// since I'm making copies of global variable stacks the operations should be executed on the copies
-	// and not affect the original
-	// not sure why one would affect the other, any suggestions appreciated
 	fmt.Println(crane1(moves, stack1))
 	// correct: CVCWCRTVQ
+
 	fmt.Println(crane2(moves, stack2))
 	// correct: CNSCZWLVT
 
 }
 
 func crane1(moves []Move, s1 [][]string) string {
-	stack1 := make([][]string, 0)
-	for _, arr := range stacks {
-		stack1 = append(stack1, arr)
-	}
+
 	for _, move := range moves {
-		from := stack1[move.from-1]
-		to := stack1[move.to-1]
+		from := s1[move.from-1]
+		to := s1[move.to-1]
 
 		for i := len(from) - 1; i >= 0 && move.amount > 0; i-- {
 			val := from[i]
@@ -104,12 +101,12 @@ func crane1(moves []Move, s1 [][]string) string {
 			from = from[:i]
 			move.amount--
 		}
-		stack1[move.from-1] = from
-		stack1[move.to-1] = to
+		s1[move.from-1] = from
+		s1[move.to-1] = to
 
 	}
 	str := strings.Builder{}
-	for _, val := range stack1 {
+	for _, val := range s1 {
 		str.WriteString(val[len(val)-1])
 	}
 	return str.String()

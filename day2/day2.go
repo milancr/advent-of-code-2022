@@ -21,34 +21,33 @@ var score = map[string]int{"A": 1, "B": 2, "C": 3, "X": 1, "Y": 2, "Z": 3}
 func main() {
 	file, err := ioutil.ReadFile("./input.txt")
 
-	inputStr := string(file)
-
 	if err != nil {
 		panic(err)
 	}
 
-	strArr := strings.Split(inputStr, "\n")
-	total := 0
+	strArr := strings.Split(string(file), "\n")
+	totalScore := 0
 	for _, pair := range strArr {
 		oppHand := pair[0]
 		userHand := pair[1]
 		score := getOutcome(string(oppHand), string(userHand))
-		total += score
+		totalScore += score
 	}
 
-	fmt.Println(total)
-	// 14827
+	// part 1
+	fmt.Println(totalScore)
 
-	totalp2 := 0
+	total := 0
 	for _, pair := range strArr {
 		oppHand := pair[0]
 		result := pair[1]
 		score := getOutcome2(string(oppHand), string(result))
-		totalp2 += score
+		total += score
 	}
 
-	fmt.Println(totalp2)
-	// 13889
+	// part 2
+	fmt.Println(total)
+
 }
 
 func getOutcome(input1, input2 string) int {

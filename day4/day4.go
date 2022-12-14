@@ -46,11 +46,11 @@ func main() {
 			total2++
 		}
 	}
-
+	// part 1
 	fmt.Println(total)
-	// 534
+	// part 2
 	fmt.Println(total2)
-	//841
+
 }
 
 func covered(e1s, e1e, e2s, e2e int) bool {

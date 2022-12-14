@@ -6,6 +6,40 @@ import (
 	"strings"
 )
 
+func priority(char rune) int {
+	if char-'a' < 0 {
+		return int(52 + (char - 'a') + 7)
+	}
+
+	return int(char - 'a' + 1)
+
+}
+
+func findBadgeCode(e1, e2, e3 string, ch chan int) {
+
+	m1 := map[rune]bool{}
+
+	m2 := map[rune]bool{}
+
+	for _, char := range e1 {
+		m1[char] = true
+	}
+
+	for _, char := range e2 {
+		if _, ok := m1[char]; ok {
+			m2[char] = true
+		}
+	}
+
+	for _, char := range e3 {
+		if _, ok := m2[char]; ok {
+			ch <- priority(char)
+			break
+		}
+	}
+
+}
+
 func main() {
 	file, err := ioutil.ReadFile("./input.txt")
 	if err != nil {
@@ -77,39 +111,5 @@ func main() {
 	}
 	fmt.Println(groupTotal)
 	// 2752
-
-}
-
-func priority(char rune) int {
-	if char-'a' < 0 {
-		return int(52 + (char - 'a') + 7)
-	}
-
-	return int(char - 'a' + 1)
-
-}
-
-func findBadgeCode(e1, e2, e3 string, ch chan int) {
-
-	m1 := map[rune]bool{}
-
-	m2 := map[rune]bool{}
-
-	for _, char := range e1 {
-		m1[char] = true
-	}
-
-	for _, char := range e2 {
-		if _, ok := m1[char]; ok {
-			m2[char] = true
-		}
-	}
-
-	for _, char := range e3 {
-		if _, ok := m2[char]; ok {
-			ch <- priority(char)
-			break
-		}
-	}
 
 }

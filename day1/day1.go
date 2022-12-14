@@ -10,18 +10,17 @@ import (
 
 func main() {
 	file, err := ioutil.ReadFile("./input.txt")
-	str := string(file)
 
 	if err != nil {
 		panic(err)
 	}
 
-	arr := strings.Split(str, "\n")
+	strarr := strings.Split(string(file), "\n")
 
 	store := [][]string{}
 	temp := []string{}
 
-	for _, val := range arr {
+	for _, val := range strarr {
 		if val != "" {
 			temp = append(temp, val)
 		} else {
@@ -54,6 +53,8 @@ func main() {
 	for _, v := range sums[:3] {
 		total += v
 	}
-	// ans 1 | ans 2
-	fmt.Println(sums[0], total)
+	// part 1
+	fmt.Println(sums[0])
+	// part2
+	fmt.Println(total)
 }
